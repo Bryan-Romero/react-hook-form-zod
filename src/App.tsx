@@ -16,8 +16,12 @@ export default function App() {
   } = methods;
 
   const onSubmit: SubmitHandler<TSignUpSchema> = async (data) => {
-    console.log(data);
-    await new Promise((resolve) => setTimeout(resolve, 4000));
+    await new Promise((resolve) =>
+      setTimeout(() => {
+        console.log(data);
+        resolve(null);
+      }, 4000)
+    );
     reset();
   };
 
@@ -27,7 +31,10 @@ export default function App() {
         <ToggleDarkLightMode />
       </div>
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+        >
           <div className="max-w-4xl mx-auto flex flex-col">
             <div className="grid gap-6 mb-6 md:grid-cols-2">
               <InputField
@@ -110,7 +117,13 @@ export default function App() {
               register
             />
 
-            <Button>Submit</Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              showSpinner
+            >
+              Submit
+            </Button>
           </div>
         </form>
       </FormProvider>
