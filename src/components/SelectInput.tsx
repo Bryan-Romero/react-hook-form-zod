@@ -2,59 +2,52 @@ import { twMerge } from "tailwind-merge";
 import useRegisterRHF from "../hooks/useRegisterRHF";
 import { UseFormRegisterReturn } from "react-hook-form";
 
-type InputFieldProps = {
+type SelectInputProps = {
   id?: string;
   label?: string;
   placeholder?: string;
-  type?: React.HTMLInputTypeAttribute;
+  options?: string[];
   classNameContainer?: string;
   classNameInput?: string;
   classNameLabel?: string;
   value?: string;
   onChange?: (value: string) => void;
-  ref?: React.LegacyRef<HTMLInputElement>;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement, Element>) => void;
-  onPaste?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
+  ref?: React.LegacyRef<HTMLSelectElement>;
+  onBlur?: (e: React.FocusEvent<HTMLSelectElement, Element>) => void;
   disabled?: boolean;
-  showError?: boolean;
   register?: UseFormRegisterReturn;
+  showError?: boolean;
 };
 
-export default function InputField({
+export default function SelectInput({
   id,
-  placeholder,
-  type,
-  label,
-  value,
   classNameContainer,
   classNameInput,
   classNameLabel,
-  onChange,
+  label,
   onBlur,
-  onPaste,
+  onChange,
+  options,
+  placeholder,
   ref,
+  value,
   disabled = false,
   showError = true,
   register,
-}: InputFieldProps) {
+}: SelectInputProps) {
   const { errorsRHF, onBlurRHF, onCahngeRHF, refRHF, nameRHF } =
     useRegisterRHF(register);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
     onChange?.(e.target.value);
     onCahngeRHF?.(e);
   };
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
+  const handleBlur = (e: React.FocusEvent<HTMLSelectElement, Element>) => {
     e.preventDefault();
     onBlur?.(e);
     onBlurRHF?.(e);
-  };
-
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    onPaste?.(e);
   };
 
   return (
@@ -70,7 +63,8 @@ export default function InputField({
           {label}
         </label>
       )}
-      <input
+
+      <select
         id={id}
         name={nameRHF}
         className={twMerge(
@@ -79,16 +73,24 @@ export default function InputField({
             "bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500",
           classNameInput
         )}
-        type={type}
         value={value}
         placeholder={placeholder}
         onChange={handleChange}
         onBlur={handleBlur}
-        onPaste={handlePaste}
         ref={refRHF ?? ref}
         disabled={disabled}
-        readOnly={disabled}
-      />
+      >
+        <option value="">{placeholder}</option>
+        {options?.map((option) => (
+          <option
+            value={option}
+            key={option}
+          >
+            {option}
+          </option>
+        ))}
+      </select>
+
       {showError && errorsRHF[nameRHF] && (
         <p className="mt-px text-sm text-red-600 dark:text-red-500 font-medium">
           {`${errorsRHF[nameRHF]?.message}`}

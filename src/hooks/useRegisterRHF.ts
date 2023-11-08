@@ -2,43 +2,52 @@ import {
   ChangeHandler,
   FieldErrors,
   FieldValues,
-  UseFormRegister,
   useFormContext,
+  UseFormWatch,
+  UseFormRegisterReturn,
+  RefCallBack,
 } from "react-hook-form";
 
-export default function useRegisterRHF({
-  id,
-  register = false,
-  ref: refRHF,
-}: {
-  id: string;
-  register?: boolean;
-  ref?: React.LegacyRef<HTMLInputElement>;
-}) {
+export default function useRegisterRHF(register?: UseFormRegisterReturn) {
   let onCahngeRHF: ChangeHandler | undefined;
   let onBlurRHF: ChangeHandler | undefined;
   let errorsRHF: FieldErrors<FieldValues> = {};
-  let registerRHF: UseFormRegister<FieldValues> | {} = {};
+  let watchRHF: UseFormWatch<FieldValues> | undefined;
+  let nameRHF: string = "";
+  let refRHF: RefCallBack | undefined;
+  let restRHF: {
+    min?: string | number | undefined;
+    max?: string | number | undefined;
+    maxLength?: number | undefined;
+    minLength?: number | undefined;
+    pattern?: string | undefined;
+    required?: boolean | undefined;
+    disabled?: boolean | undefined;
+  } = {};
 
   if (register) {
+    const { onChange, onBlur, ref, name, ...rest } = register;
     const {
-      register,
       formState: { errors },
+      watch,
     } = useFormContext();
-    const { onChange, onBlur, ref } = register(id);
 
-    registerRHF = register;
     errorsRHF = errors;
     onCahngeRHF = onChange;
     onBlurRHF = onBlur;
+    watchRHF = watch;
     refRHF = ref;
+    nameRHF = name;
+    restRHF = rest;
   }
 
   return {
-    registerRHF,
     onCahngeRHF,
     onBlurRHF,
     errorsRHF,
+    watchRHF,
     refRHF,
+    nameRHF,
+    restRHF,
   };
 }

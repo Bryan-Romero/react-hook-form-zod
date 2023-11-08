@@ -4,6 +4,8 @@ import InputField from "./components/InputField";
 import ToggleDarkLightMode from "./components/ToggleDarkLightMode";
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import { TSignUpSchema, signUpSchema } from "./lib/types/typeSignUpSchema.d";
+import SelectInput from "./components/SelectInput";
+import Checkbox from "./components/Checkbox";
 
 export default function App() {
   const methods = useForm<TSignUpSchema>({
@@ -13,6 +15,7 @@ export default function App() {
     handleSubmit,
     formState: { isSubmitting },
     reset,
+    register,
   } = methods;
 
   const onSubmit: SubmitHandler<TSignUpSchema> = async (data) => {
@@ -38,25 +41,22 @@ export default function App() {
           <div className="max-w-4xl mx-auto flex flex-col">
             <div className="grid gap-6 mb-6 md:grid-cols-2">
               <InputField
-                id="firstName"
                 placeholder="John"
                 label="First name"
                 type="text"
                 disabled={isSubmitting}
-                register
+                register={register("firstName")}
               />
 
               <InputField
-                id="lastName"
                 placeholder="Doe"
                 label="Last name"
                 type="text"
                 disabled={isSubmitting}
-                register
+                register={register("lastName")}
               />
 
               <InputField
-                id="company"
                 placeholder="Flowbite"
                 label="Company"
                 type="text"
@@ -64,7 +64,6 @@ export default function App() {
               />
 
               <InputField
-                id="phone"
                 placeholder="123-45-678"
                 label="Phone number"
                 type="tel"
@@ -72,7 +71,6 @@ export default function App() {
               />
 
               <InputField
-                id="website"
                 placeholder="flowbite.com"
                 label="Website URL"
                 type="url"
@@ -80,41 +78,53 @@ export default function App() {
               />
 
               <InputField
-                id="visitors"
                 label="Unique visitors (per month)"
                 type="number"
                 disabled={isSubmitting}
               />
+
+              <SelectInput
+                label="Select an option"
+                placeholder="Choose a country"
+                options={["MX", "US", "COL", "ARG", "UK", "CHL", "BRA", "PER"]}
+                // value="US"
+                disabled={isSubmitting}
+                register={register("country")}
+              />
             </div>
 
             <InputField
-              id="email"
               placeholder="john.doe@company.com"
               label="Email address"
               type="email"
               classNameContainer="mb-6"
               disabled={isSubmitting}
-              register
+              register={register("email")}
             />
 
             <InputField
-              id="password"
               placeholder="•••••••••"
               label="Password"
               type="password"
               classNameContainer="mb-6"
               disabled={isSubmitting}
-              register
+              register={register("password")}
             />
 
             <InputField
-              id="confirmPassword"
               placeholder="•••••••••"
               label="Confirm password"
               type="password"
               classNameContainer="mb-6"
               disabled={isSubmitting}
-              register
+              register={register("confirmPassword")}
+            />
+
+            <Checkbox
+              id="terms"
+              label="I agree with the terms and conditions"
+              disabled={isSubmitting}
+              register={register("terms")}
             />
 
             <Button
