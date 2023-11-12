@@ -6,6 +6,9 @@ import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import { TSignUpSchema, signUpSchema } from "./lib/types/typeSignUpSchema.d";
 import SelectInput from "./components/SelectInput";
 import Checkbox from "./components/Checkbox";
+import { useState } from "react";
+import TermsConditions from "./components/TermsConditions";
+import InputPhoneNumber from "./components/InputPhoneNumber";
 
 export default function App() {
   const methods = useForm<TSignUpSchema>({
@@ -16,7 +19,10 @@ export default function App() {
     formState: { isSubmitting },
     reset,
     register,
+    setValue,
+    watch,
   } = methods;
+  const [modal, setModal] = useState(false);
 
   const onSubmit: SubmitHandler<TSignUpSchema> = async (data) => {
     await new Promise((resolve) =>
@@ -28,11 +34,22 @@ export default function App() {
     reset();
   };
 
+  const handleAcceptTerms = () => {
+    setValue("terms", true);
+    setModal(false);
+  };
+
+  const handleDeclineTerms = () => {
+    setValue("terms", false);
+    setModal(false);
+  };
+
   return (
     <div className="w-screen h-screen p-5 bg-white dark:bg-gray-900 antialiased">
       <div className="max-w-6xl mx-auto flex justify-end">
         <ToggleDarkLightMode />
       </div>
+      <span className="icon-[material-symbols--10k]" />
       <FormProvider {...methods}>
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -63,11 +80,19 @@ export default function App() {
                 disabled={isSubmitting}
               />
 
-              <InputField
+              {/* <InputField
                 placeholder="123-45-678"
                 label="Phone number"
                 type="tel"
                 disabled={isSubmitting}
+              /> */}
+
+              <InputPhoneNumber
+                label="Phone number"
+                disabled={isSubmitting}
+                placeholder="123-45-678"
+                registerAreaCode={register("areaCode")}
+                registerPhoneNumber={register("phoneNumber")}
               />
 
               <InputField
@@ -122,10 +147,21 @@ export default function App() {
 
             <Checkbox
               id="terms"
-              label="I agree with the terms and conditions"
+              // label="I agree with the terms and conditions"
               disabled={isSubmitting}
               register={register("terms")}
-            />
+              classNameContainer="mb-6"
+            >
+              I agree with the{" "}
+              <button
+                className="text-blue-600 hover:underline dark:text-blue-500 outline-none"
+                type="button"
+                onClick={() => setModal(true)}
+              >
+                terms and conditions
+              </button>
+              .
+            </Checkbox>
 
             <Button
               type="submit"
@@ -134,6 +170,15 @@ export default function App() {
             >
               Submit
             </Button>
+
+            {modal && (
+              <TermsConditions
+                id="modal-terms"
+                onClose={() => setModal(false)}
+                onAccept={handleAcceptTerms}
+                onDecline={handleDeclineTerms}
+              />
+            )}
           </div>
         </form>
       </FormProvider>

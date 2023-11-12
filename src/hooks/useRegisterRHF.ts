@@ -6,6 +6,7 @@ import {
   UseFormWatch,
   UseFormRegisterReturn,
   RefCallBack,
+  UseFormSetValue,
 } from "react-hook-form";
 
 export default function useRegisterRHF(register?: UseFormRegisterReturn) {
@@ -13,8 +14,10 @@ export default function useRegisterRHF(register?: UseFormRegisterReturn) {
   let onBlurRHF: ChangeHandler | undefined;
   let errorsRHF: FieldErrors<FieldValues> = {};
   let watchRHF: UseFormWatch<FieldValues> | undefined;
+  let watchValueRHF: any | undefined;
   let nameRHF: string = "";
   let refRHF: RefCallBack | undefined;
+  let setValueRHF: UseFormSetValue<FieldValues> | undefined;
   let restRHF: {
     min?: string | number | undefined;
     max?: string | number | undefined;
@@ -30,15 +33,18 @@ export default function useRegisterRHF(register?: UseFormRegisterReturn) {
     const {
       formState: { errors },
       watch,
+      setValue,
     } = useFormContext();
 
     errorsRHF = errors;
     onCahngeRHF = onChange;
     onBlurRHF = onBlur;
+    watchValueRHF = watch(name);
     watchRHF = watch;
     refRHF = ref;
     nameRHF = name;
     restRHF = rest;
+    setValueRHF = setValue;
   }
 
   return {
@@ -49,5 +55,7 @@ export default function useRegisterRHF(register?: UseFormRegisterReturn) {
     refRHF,
     nameRHF,
     restRHF,
+    setValueRHF,
+    watchValueRHF,
   };
 }
